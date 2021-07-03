@@ -2,6 +2,19 @@
   <div class="row">
     <div class="col-12">
       <h1>{{title}}</h1>
+			<h1 *ngIf="showErrorMessage">{{errorMessage}}</h1>
     </div>
   </div>
+	<div class="row">
+		<div class="col-12">
+			<div class="city-card" *ngFor="let city of citiesData">
+				<div class="city-country"><strong>Country:</strong> {{city.country}}</div>
+				<div class="city-name"><strong>City Name:</strong> {{city.name}}</div>
+				<div class="city-geonameid"><strong>Geonameid:</strong> {{city.geonameid}}</div>
+				<div class="city-subcountry" *ngIf="city.subcountry"><strong>Subcountry:</strong> {{city.subcountry}}</div>
+			</div>
+		</div>
+	</div>
 </div>
+
+

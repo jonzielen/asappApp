@@ -1,7 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-
+interface CityInfo {
+  geonameid: number;
+  name: string;
+  country: string;
+  subcountry?: string;
+};
 
 @Component({
   selector: 'app-root',
@@ -12,7 +17,8 @@ export class AppComponent implements OnInit {
   title: string = 'asappApp';
 	showErrorMessage: boolean = false;
 	errorMessage: string = 'There was an error, please try again later.'
-	citiesData: Array<{ [key: string]: string | number }>;
+	citiesData: Array<CityInfo>;
+	locationSearchText: string;
 
   constructor(private http: HttpClient) { }
 
@@ -33,6 +39,10 @@ export class AppComponent implements OnInit {
     error => {
 			this.showErrorMessage = true;
     });
+  }
+
+	getSearchText(e) {
+    this.locationSearchText = e;
   }
 
 }

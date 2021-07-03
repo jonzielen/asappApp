@@ -7,6 +7,11 @@
   </div>
 	<div class="row">
 		<div class="col-12">
+			<app-search (searchText)="getSearchText($event)"></app-search>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-12">
 			<div class="city-card" *ngFor="let city of citiesData">
 				<div class="city-country"><strong>Country:</strong> {{city.country}}</div>
 				<div class="city-name"><strong>City Name:</strong> {{city.name}}</div>

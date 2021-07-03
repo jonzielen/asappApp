@@ -7,16 +7,33 @@
   </div>
 	<div class="row">
 		<div class="col-12">
-			<app-search (searchText)="getSearchText($event)"></app-search>
+			<app-search (searchText)="updateSearchText($event)"></app-search>
+		</div>
+	</div>
+	<div class="row" *ngIf="savedLocations.length !== 0">
+		<div class="col-12">
+			<h2>Saved Items: {{savedLocations.length}}</h2>
+			<div class="location-card location-saved" *ngFor="let savedLocation of savedLocations; let i=index;">
+				<button type="button" (click)="removeFromSaved($event, savedLocation, i)">Remove</button>
+				<div>{{i + 1}}.</div>
+				<div class="location-country"><strong>Country:</strong> {{savedLocation.country}}</div>
+				<div class="location-name"><strong>City Name:</strong> {{savedLocation.name}}</div>
+				<div class="location-geonameid"><strong>Geonameid:</strong> {{savedLocation.geonameid}}</div>
+				<div class="location-subcountry" *ngIf="savedLocation.subcountry"><strong>Subcountry:</strong> {{savedLocation.subcountry}}</div>
+			</div>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col-12">
-			<div class="city-card" *ngFor="let city of citiesData">
-				<div class="city-country"><strong>Country:</strong> {{city.country}}</div>
-				<div class="city-name"><strong>City Name:</strong> {{city.name}}</div>
-				<div class="city-geonameid"><strong>Geonameid:</strong> {{city.geonameid}}</div>
-				<div class="city-subcountry" *ngIf="city.subcountry"><strong>Subcountry:</strong> {{city.subcountry}}</div>
+			<h2 *ngIf="!filteredSearchData && !showErrorMessage">Loading results...</h2>
+			<h2 *ngIf="filteredSearchData">Results: {{filteredSearchData.length}}</h2>
+			<div class="location-card" *ngFor="let location of filteredSearchData; let i=index;">
+				<button type="button" (click)="addToSaved($event, location, i)">Add</button>
+				<div>{{i + 1}}.</div>
+				<div class="location-country"><strong>Country:</strong> {{location.country}}</div>
+				<div class="location-name"><strong>City Name:</strong> {{location.name}}</div>
+				<div class="location-geonameid"><strong>Geonameid:</strong> {{location.geonameid}}</div>
+				<div class="location-subcountry" *ngIf="location.subcountry"><strong>Subcountry:</strong> {{location.subcountry}}</div>
 			</div>
 		</div>
 	</div>

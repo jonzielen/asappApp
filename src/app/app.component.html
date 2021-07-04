@@ -2,19 +2,19 @@
   <div class="row">
     <div class="col-12">
       <h1>{{title}}</h1>
-			<h1 *ngIf="showErrorMessage">{{errorMessage}}</h1>
+			<h1 *ngIf="showErrorMessage">There was an error, please try again later.</h1>
     </div>
   </div>
 	<div class="row">
 		<div class="col-12">
-			<app-search (searchText)="updateSearchText($event)"></app-search>
+			<app-search (searchText)="getUpdatedSearchText($event)"></app-search>
 		</div>
 	</div>
-	<div class="row" *ngIf="savedLocations.length !== 0">
+	<div class="row" *ngIf="this.data.dataSavedDisplay.length !== 0">
 		<div class="col-12">
-			<h2>Saved Items: {{savedLocations.length}}</h2>
-			<div class="location-card location-saved" *ngFor="let savedLocation of savedLocations; let i=index;">
-				<button type="button" (click)="removeFromSaved($event, savedLocation, i)">Remove</button>
+			<h2>Saved Items: {{this.data.dataSavedDisplay.length}}</h2>
+			<div class="location-card location-saved" *ngFor="let savedLocation of this.data.dataSavedDisplay; let i=index;">
+				<button type="button" (click)="updateSavedList(savedLocation, 'remove')">Remove</button>
 				<div>{{i + 1}}.</div>
 				<div class="location-country"><strong>Country:</strong> {{savedLocation.country}}</div>
 				<div class="location-name"><strong>City Name:</strong> {{savedLocation.name}}</div>
@@ -25,18 +25,18 @@
 	</div>
 	<div class="row">
 		<div class="col-12">
-			<h2 *ngIf="!filteredSearchData && !showErrorMessage">Loading results...</h2>
-			<h2 *ngIf="filteredSearchData">Results: {{filteredSearchData.length}}</h2>
-			<div class="location-card" *ngFor="let location of filteredSearchData; let i=index;">
-				<button type="button" (click)="addToSaved($event, location, i)">Add</button>
-				<div>{{i + 1}}.</div>
-				<div class="location-country"><strong>Country:</strong> {{location.country}}</div>
-				<div class="location-name"><strong>City Name:</strong> {{location.name}}</div>
-				<div class="location-geonameid"><strong>Geonameid:</strong> {{location.geonameid}}</div>
-				<div class="location-subcountry" *ngIf="location.subcountry"><strong>Subcountry:</strong> {{location.subcountry}}</div>
+			<h2 *ngIf="this.data.dataFilteredDisplay.length === 0 && !showErrorMessage">Loading results...</h2>
+			<h2 *ngIf="this.data.dataFilteredDisplay.length > 0">Results: {{this.data.dataFilteredDisplay.length}}</h2>
+			<div class="location-scroll-container" (scroll)="scrollCheck($event.target)">
+				<div class="location-card" *ngFor="let location of this.data.dataFilteredDisplay; let i=index;">
+					<button type="button" (click)="updateSavedList(location, 'add')">Add</button>
+					<div>{{i + 1}}.</div>
+					<div class="location-country"><strong>Country:</strong> {{location.country}}</div>
+					<div class="location-name"><strong>City Name:</strong> {{location.name}}</div>
+					<div class="location-geonameid"><strong>Geonameid:</strong> {{location.geonameid}}</div>
+					<div class="location-subcountry" *ngIf="location.subcountry"><strong>Subcountry:</strong> {{location.subcountry}}</div>
+				</div>
 			</div>
 		</div>
 	</div>
 </div>
-
-

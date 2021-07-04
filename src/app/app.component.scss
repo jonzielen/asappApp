@@ -6,11 +6,20 @@ h1 {
   }
 }
 
+.location-scroll-container {
+	overflow-y: scroll;
+	height: 70vh;
+}
+
 .location-card {
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 0.75rem;
 	background-color: #f5f5f5;
 	margin-bottom: 0.25rem;
+
+	&:nth-child(odd) {
+		background-color: #dedede;
+	}
 
 	&-country {
 

@@ -1,12 +1,26 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { map } from 'rxjs/operators'
 
 interface CityInfo {
   geonameid: number;
   name: string;
   country: string;
   subcountry?: string;
+	index: number;
+	saved: boolean;
 };
+
+interface Settings {
+	itemsToShow: number
+}
+
+interface Data {
+	dataUnfiltered: Array<CityInfo>;
+	dataFiltered: Array<CityInfo>;
+	dataFilteredDisplay: Array<CityInfo>;
+	dataSavedDisplay: Array<CityInfo>;
+}
 
 @Component({
   selector: 'app-root',
@@ -16,10 +30,16 @@ interface CityInfo {
 export class AppComponent implements OnInit {
   title: string = 'asappApp';
 	showErrorMessage: boolean = false;
-	errorMessage: string = 'There was an error, please try again later.'
-	fullSearchData: Array<CityInfo>;
-	filteredSearchData: Array<CityInfo>;
-	savedLocations: Array<CityInfo> = [];
+	settings: Settings = {
+		itemsToShow: 10
+	}
+	data: Data = {
+		dataUnfiltered: [],
+		dataFiltered: [],
+		dataFilteredDisplay: [],
+		dataSavedDisplay: []
+	}
+	userInputText: string;
 
   constructor(private http: HttpClient) { }
 
@@ -29,63 +49,119 @@ export class AppComponent implements OnInit {
 
 	private fetchData() {
 		const apiUrl = 'http://localhost:3030/cities';
+		// const apiUrl = 'http://localhost:3030/cities?limit=10&offset=0';
+
+		// load only 10 files initially, then load the rest after
+		// http://localhost:3030/cities?limit=20&offset=0
+
 
 		this.http.get(apiUrl)
+		.pipe(map(rawData => {
+			// add index, and saved status; index will help with finding locations in the future
+			rawData['indexedData'] = [...rawData['data']].map((item, i) => {
+				item.index = i;
+				item.saved = false;
+				return item;
+			});
+			return rawData;
+		}))
     .subscribe(cities => {
-
-      this.fullSearchData = cities['data'].slice(0,200); // remove slice limit
-			this.filteredSearchData = this.fullSearchData;
+			this.data.dataUnfiltered = cities['indexedData'].slice(0, 500); // remove slice limit
+			this.displayInitData();
     },
     error => {
 			this.showErrorMessage = true;
     });
   }
 
-	// change name
-	updateSearchText(e: string) {
-		this.filteredSearchData = this.filterData(e);
+	displayInitData() {
+		this.data.dataFilteredDisplay = this.buildDisplayData(this.data.dataUnfiltered, this.settings.itemsToShow);
+	}
+
+	buildDisplayData(dataArray: Array<CityInfo>, limit: number) {
+		return dataArray.slice(0, limit);
+	}
+
+	getUpdatedSearchText(userText: string) {
+		this.userInputText = userText;
+
+		const array = this.data.dataFiltered.length === 0 ? this.data.dataUnfiltered : this.data.dataFiltered;
+		const data = this.filterDataByText(array, userText);
+
+		this.data.dataFilteredDisplay = this.buildDisplayData(data, this.settings.itemsToShow);
   }
 
-	filterData(searchText: string) {
-		// default to show all search data
-		if (!this.filteredSearchData || !searchText) return this.fullSearchData;
-
-		return this.fullSearchData.filter(function(location: CityInfo) {
+	filterDataByText(arrayData: Array<CityInfo>, searchText: string ) {
+		return arrayData.filter(function(location: CityInfo) {
 			for (let prop in location) {
 				// search
+				if (location[prop] === null) return;
+
 				if (location[prop].toString().toLowerCase().search(new RegExp(searchText, 'i')) > -1) return location;
 			}
 		});
 	}
 
-	addToSaved(event: Event, locationData: CityInfo, index: number) {
-		// add data to saved array
-		this.savedLocations.push(locationData);
+	updateSavedList(location: CityInfo, type: string) {
+		if (type === 'add') {
+			// update item status
+			this.data.dataUnfiltered[location['index']].saved = true;
 
-		// remove item from master array
-		this.fullSearchData.splice(index, 1);
+			// updates saved items list
+			this.data.dataSavedDisplay = this.filterRemoveUnsavedItems(this.data.dataUnfiltered);
 
-		// remove data from filtered array
-		this.filteredSearchData = this.fullSearchData;
+			// remove filtered items
+			let data = this.filterRemoveSavedItems(this.data.dataUnfiltered);
+
+			// apply text search
+			if (this.userInputText !== '') data = this.filterDataByText(data, this.userInputText);
+
+			// update browser
+			this.data.dataFilteredDisplay = this.buildDisplayData(data, this.settings.itemsToShow);
+		}
+
+		if (type === 'remove') {
+			// update item status
+			this.data.dataUnfiltered[location['index']].saved = false;
+
+			// updates saved items list
+			this.data.dataSavedDisplay = this.filterRemoveUnsavedItems(this.data.dataUnfiltered);
+
+			// remove saved items
+			let data = this.filterRemoveSavedItems(this.data.dataUnfiltered);
+
+			// apply text search
+			if (this.userInputText !== '') data = this.filterDataByText(data, this.userInputText);
+
+			// update browser
+			this.data.dataFilteredDisplay = this.buildDisplayData(data, this.settings.itemsToShow);
+		}
 	}
 
-	removeFromSaved(event: Event, locationData: CityInfo, index: number) {
-		// add data to saved array
-		this.savedLocations.splice(index, 1);
-
-		// remove item from master array
-		this.fullSearchData.push(locationData);
-
-		// remove data from filtered array
-		this.filteredSearchData = this.fullSearchData;
+	filterRemoveSavedItems(items) {
+		return items.filter(item => !!!item.saved);
 	}
 
+	filterRemoveUnsavedItems(array) {
+		return array.filter(item => !!item.saved);
+	}
 
+	removeSavedLocation(savedLocation: Array<CityInfo>, id: number) {
+		return savedLocation.filter( item => item.geonameid !== id);
+	}
 
+	scrollCheck(target) {
+		// if user scrolls to within 200px of bottom, add more data if available
+		if ( (target.scrollTop + target.offsetHeight) > target.scrollHeight - 200 ) {
+			// this.addDataOnScroll();
+		}
+	}
 
+	addDataOnScroll() {
+		// const filteredLength = this.filteredSearchData.length;
+		// const itemsToShow = this.settings.itemsToShow;
+		// const displayItems = filteredLength === 0 ? itemsToShow : filteredLength + itemsToShow;
 
-
-
-
-
+		// return this.filteredSearchData = this.fullSearchData.slice(0, displayItems);
+	}
 }

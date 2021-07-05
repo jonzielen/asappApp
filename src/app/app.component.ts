@@ -79,19 +79,28 @@ export class AppComponent implements OnInit {
 	}
 
 	buildDisplayData(dataArray: Array<CityInfo>, limit: number) {
+		this.data.dataFiltered = dataArray;
 		return dataArray.slice(0, limit);
 	}
 
 	getUpdatedSearchText(userText: string) {
+		// update global variable
 		this.userInputText = userText;
 
+		// if text is empty, show all data
+		if (userText === '') return this.data.dataFilteredDisplay = this.buildDisplayData(this.data.dataUnfiltered, this.settings.itemsToShow);
+
+		// determine array to use
 		const array = this.data.dataFiltered.length === 0 ? this.data.dataUnfiltered : this.data.dataFiltered;
+
+		// filter by text
 		const data = this.filterDataByText(array, userText);
 
+		// update browser
 		this.data.dataFilteredDisplay = this.buildDisplayData(data, this.settings.itemsToShow);
   }
 
-	filterDataByText(arrayData: Array<CityInfo>, searchText: string ) {
+	filterDataByText(arrayData: Array<CityInfo>, searchText: string) {
 		return arrayData.filter(function(location: CityInfo) {
 			for (let prop in location) {
 				// search
@@ -138,11 +147,11 @@ export class AppComponent implements OnInit {
 		}
 	}
 
-	filterRemoveSavedItems(items) {
+	filterRemoveSavedItems(items: Array<CityInfo>) {
 		return items.filter(item => !!!item.saved);
 	}
 
-	filterRemoveUnsavedItems(array) {
+	filterRemoveUnsavedItems(array: Array<CityInfo>) {
 		return array.filter(item => !!item.saved);
 	}
 
@@ -150,18 +159,17 @@ export class AppComponent implements OnInit {
 		return savedLocation.filter( item => item.geonameid !== id);
 	}
 
-	scrollCheck(target) {
+	scrollCheck(target: HTMLElement) {
 		// if user scrolls to within 200px of bottom, add more data if available
-		if ( (target.scrollTop + target.offsetHeight) > target.scrollHeight - 200 ) {
-			// this.addDataOnScroll();
+		if ((target.scrollTop + target.offsetHeight) > target.scrollHeight - 200) {
+			this.updateDisplayData();
 		}
 	}
 
-	addDataOnScroll() {
-		// const filteredLength = this.filteredSearchData.length;
-		// const itemsToShow = this.settings.itemsToShow;
-		// const displayItems = filteredLength === 0 ? itemsToShow : filteredLength + itemsToShow;
+	updateDisplayData() {
+		const updatedArrayLength = this.data.dataFilteredDisplay.length + this.settings.itemsToShow;
+		const filterCopy = this.data.dataFiltered.slice();
 
-		// return this.filteredSearchData = this.fullSearchData.slice(0, displayItems);
+		this.data.dataFilteredDisplay = filterCopy.slice(0, updatedArrayLength);
 	}
 }

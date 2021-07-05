@@ -10,10 +10,10 @@
 			<app-search (searchText)="getUpdatedSearchText($event)"></app-search>
 		</div>
 	</div>
-	<div class="row" *ngIf="this.data.dataSavedDisplay.length !== 0">
+	<div class="row" *ngIf="data.dataSavedDisplay.length !== 0">
 		<div class="col-12">
-			<h2>Saved Items: {{this.data.dataSavedDisplay.length}}</h2>
-			<div class="location-card location-saved" *ngFor="let savedLocation of this.data.dataSavedDisplay; let i=index;">
+			<h2>Saved Items: {{data.dataSavedDisplay.length}}</h2>
+			<div class="location-card location-saved" *ngFor="let savedLocation of data.dataSavedDisplay; let i=index;">
 				<button type="button" (click)="updateSavedList(savedLocation, 'remove')">Remove</button>
 				<div>{{i + 1}}.</div>
 				<div class="location-country"><strong>Country:</strong> {{savedLocation.country}}</div>
@@ -25,10 +25,10 @@
 	</div>
 	<div class="row">
 		<div class="col-12">
-			<h2 *ngIf="this.data.dataFilteredDisplay.length === 0 && !showErrorMessage">Loading results...</h2>
-			<h2 *ngIf="this.data.dataFilteredDisplay.length > 0">Results: {{this.data.dataFilteredDisplay.length}}</h2>
+			<h2 *ngIf="data.dataFilteredDisplay.length === 0 && !showErrorMessage">Loading results...</h2>
+			<h2 *ngIf="data.dataFilteredDisplay.length > 0">Results: {{data.dataFilteredDisplay.length}}</h2>
 			<div class="location-scroll-container" (scroll)="scrollCheck($event.target)">
-				<div class="location-card" *ngFor="let location of this.data.dataFilteredDisplay; let i=index;">
+				<div class="location-card" *ngFor="let location of data.dataFilteredDisplay; let i=index;">
 					<button type="button" (click)="updateSavedList(location, 'add')">Add</button>
 					<div>{{i + 1}}.</div>
 					<div class="location-country"><strong>Country:</strong> {{location.country}}</div>

@@ -26,7 +26,7 @@
 	<div class="row">
 		<div class="col-12">
 			<h2 *ngIf="data.dataFilteredDisplay.length === 0 && !showErrorMessage">Loading results...</h2>
-			<h2 *ngIf="data.dataFilteredDisplay.length > 0">Results: {{data.dataFilteredDisplay.length}}</h2>
+			<h2 *ngIf="data.dataFilteredDisplay.length > 0">Results: {{data.dataFiltered.length}}</h2>
 			<div class="location-scroll-container" (scroll)="scrollCheck($event.target)">
 				<div class="location-card" *ngFor="let location of data.dataFilteredDisplay; let i=index;">
 					<button type="button" (click)="updateSavedList(location, 'add')">Add</button>

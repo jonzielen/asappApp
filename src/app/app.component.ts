@@ -58,15 +58,16 @@ export class AppComponent implements OnInit {
 		this.http.get(apiUrl)
 		.pipe(map(rawData => {
 			// add index, and saved status; index will help with finding locations in the future
-			rawData['indexedData'] = [...rawData['data']].map((item, i) => {
-				item.index = i;
-				item.saved = false;
+			rawData['indexedData'] = rawData['data'].map((item: object, i: number) => {
+				item['index'] = i;
+				item['saved'] = false;
 				return item;
 			});
 			return rawData;
 		}))
     .subscribe(cities => {
-			this.data.dataUnfiltered = cities['indexedData'].slice(0, 500); // remove slice limit
+			// this.data.dataUnfiltered = cities['indexedData'].slice(0, 50); // remove slice limit
+			this.data.dataUnfiltered = cities['indexedData'];
 			this.displayInitData();
     },
     error => {
@@ -103,9 +104,10 @@ export class AppComponent implements OnInit {
 	filterDataByText(arrayData: Array<CityInfo>, searchText: string) {
 		return arrayData.filter(function(location: CityInfo) {
 			for (let prop in location) {
-				// search
-				if (location[prop] === null) return;
+				// limit to these props, exit if not in list
+				if (!['name', 'country', 'subcountry'].includes(prop)) return;
 
+				// search
 				if (location[prop].toString().toLowerCase().search(new RegExp(searchText, 'i')) > -1) return location;
 			}
 		});

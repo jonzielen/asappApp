@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs/operators'
 
 interface CityInfo {
   geonameid: number;
@@ -56,18 +55,10 @@ export class AppComponent implements OnInit {
 
 
 		this.http.get(apiUrl)
-		.pipe(map(rawData => {
-			// add index, and saved status; index will help with finding locations in the future
-			rawData['indexedData'] = rawData['data'].map((item: object, i: number) => {
-				item['index'] = i;
-				item['saved'] = false;
-				return item;
-			});
-			return rawData;
-		}))
     .subscribe(cities => {
-			// this.data.dataUnfiltered = cities['indexedData'].slice(0, 50); // remove slice limit
-			this.data.dataUnfiltered = cities['indexedData'];
+			// this.data.dataUnfiltered = cities['data'].slice(0, 200); // remove slice limit
+			this.data.dataUnfiltered = cities['data'];
+
 			this.displayInitData();
     },
     error => {
@@ -104,11 +95,15 @@ export class AppComponent implements OnInit {
 	filterDataByText(arrayData: Array<CityInfo>, searchText: string) {
 		return arrayData.filter(function(location: CityInfo) {
 			for (let prop in location) {
-				// limit to these props, exit if not in list
-				if (!['name', 'country', 'subcountry'].includes(prop)) return;
+				// exit on empty prop vals
+				if (location[prop] === null) return;
+
+				let flag = ['country', 'name', 'subcountry'].includes(prop.toString()) ? true : false;
 
 				// search
-				if (location[prop].toString().toLowerCase().search(new RegExp(searchText, 'i')) > -1) return location;
+				if (
+					location[prop].toString().toLowerCase().search(new RegExp(searchText, 'i')) > -1 &&
+					flag ) return location;
 			}
 		});
 	}
@@ -116,7 +111,7 @@ export class AppComponent implements OnInit {
 	updateSavedList(location: CityInfo, type: string) {
 		if (type === 'add') {
 			// update item status
-			this.data.dataUnfiltered[location['index']].saved = true;
+			this.data.dataUnfiltered = this.updateSavedFlag(this.data.dataUnfiltered, location, true);
 
 			// updates saved items list
 			this.data.dataSavedDisplay = this.filterRemoveUnsavedItems(this.data.dataUnfiltered);
@@ -133,7 +128,7 @@ export class AppComponent implements OnInit {
 
 		if (type === 'remove') {
 			// update item status
-			this.data.dataUnfiltered[location['index']].saved = false;
+			this.data.dataUnfiltered = this.updateSavedFlag(this.data.dataUnfiltered, location, false);
 
 			// updates saved items list
 			this.data.dataSavedDisplay = this.filterRemoveUnsavedItems(this.data.dataUnfiltered);
@@ -157,8 +152,11 @@ export class AppComponent implements OnInit {
 		return array.filter(item => !!item.saved);
 	}
 
-	removeSavedLocation(savedLocation: Array<CityInfo>, id: number) {
-		return savedLocation.filter( item => item.geonameid !== id);
+	updateSavedFlag(array: Array<CityInfo>, location: CityInfo, value: boolean) {
+		return array.map(item => {
+			if (item.geonameid === location.geonameid) item.saved = value;
+			return item;
+		});
 	}
 
 	scrollCheck(target: HTMLElement) {

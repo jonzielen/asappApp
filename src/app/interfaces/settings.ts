@@ -1,3 +1,4 @@
 export interface Settings {
-	itemsToShow: number
+	itemsToShow: number,
+	apiUrl: string
 }

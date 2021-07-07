@@ -13,6 +13,7 @@ export class AppComponent implements OnInit, DoCheck {
 	isAppLoading: boolean = true;
 	showErrorMessage: boolean = false;
 	settings: Settings = {
+		apiUrl: 'http://localhost:3030/cities',
 		itemsToShow: 10
 	}
 	data: Data = {
@@ -37,14 +38,7 @@ export class AppComponent implements OnInit, DoCheck {
   }
 
 	private fetchData() {
-		const apiUrl = 'http://localhost:3030/cities';
-		// const apiUrl = 'http://localhost:3030/cities?limit=10&offset=0';
-
-		// load only 10 files initially, then load the rest after
-		// http://localhost:3030/cities?limit=20&offset=0
-
-
-		this.http.get(apiUrl)
+		this.http.get(this.settings.apiUrl)
     .subscribe(cities => {
 			// this.data.dataUnfiltered = cities['data'].slice(0, 200); // remove slice limit
 			this.data.dataUnfiltered = cities['data'];

@@ -53,6 +53,10 @@ export class AppComponent implements OnInit, DoCheck {
 		this.data.dataFilteredDisplay = this.buildDisplayData(this.data.dataUnfiltered, this.settings.itemsToShow);
 	}
 
+	trackByGeonameid(index: number, location: CityInfo) {
+    return location.geonameid;
+	}
+
 	buildDisplayData(dataArray: Array<CityInfo>, limit: number) {
 		this.data.dataFiltered = dataArray;
 		return dataArray.slice(0, limit);

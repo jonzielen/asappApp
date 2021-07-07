@@ -14,7 +14,8 @@
 		<div class="col-12">
 			<h2>Saved Items: {{data.dataSavedDisplay.length}}</h2>
 			<div class="location-card location-saved" *ngFor="let savedLocation of data.dataSavedDisplay; let i=index;">
-				<button type="button" (click)="updateSavedList(savedLocation, 'remove')">Remove</button>
+				<!-- <button type="button" (click)="updateSavedList(savedLocation, 'remove')">Remove</button> -->
+				<input type="checkbox" (click)="updateSavedList(savedLocation, 'remove')" checked>
 				<div>{{i + 1}}.</div>
 				<div class="location-country"><strong>Country:</strong> {{savedLocation.country}}</div>
 				<div class="location-name"><strong>City Name:</strong> {{savedLocation.name}}</div>
@@ -25,12 +26,13 @@
 	</div>
 	<div class="row">
 		<div class="col-12">
-			<h2 *ngIf="showLoadingMessage">Loading data...</h2>
+			<h2 *ngIf="isAppLoading">Loading data...</h2>
 			<h2 *ngIf="showNoResultsMessage">No results</h2>
 			<h2 *ngIf="data.dataFilteredDisplay.length > 0">Results: {{data.dataFiltered.length}}</h2>
 			<div class="location-scroll-container" (scroll)="scrollCheck($event.target)">
 				<div class="location-card" *ngFor="let location of data.dataFilteredDisplay; let i=index;">
-					<button type="button" (click)="updateSavedList(location, 'add')">Add</button>
+					<!-- <button type="button" (click)="updateSavedList(location, 'add')">Add</button> -->
+					<input type="checkbox" (click)="updateSavedList(location, 'add')">
 					<div>{{i + 1}}.</div>
 					<div class="location-country"><strong>Country:</strong> {{location.country}}</div>
 					<div class="location-name"><strong>City Name:</strong> {{location.name}}</div>

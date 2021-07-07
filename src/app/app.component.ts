@@ -23,7 +23,6 @@ export class AppComponent implements OnInit, DoCheck {
 		dataSavedDisplay: []
 	}
 	userInputText: string;
-	showLoadingMessage: boolean;
 	showNoResultsMessage: boolean;
 
   constructor(private http: HttpClient) { }
@@ -33,7 +32,6 @@ export class AppComponent implements OnInit, DoCheck {
   }
 
 	ngDoCheck(){
-		this.showLoadingMessage = this.testForLoadingMessage();
 		this.showNoResultsMessage = this.testForNoResultsMessage();
   }
 
@@ -65,16 +63,27 @@ export class AppComponent implements OnInit, DoCheck {
 		this.userInputText = userText;
 
 		// if text is empty, show all data
-		if (userText === '') return this.data.dataFilteredDisplay = this.buildDisplayData(this.data.dataUnfiltered, this.settings.itemsToShow);
+		if (userText === '') {
+
+			// remove filtered items
+			let dataFiltered = this.filterRemoveSavedItems(this.data.dataUnfiltered);
+
+			return this.data.dataFilteredDisplay = this.buildDisplayData(dataFiltered, this.settings.itemsToShow);
+		}
 
 		// determine array to use
-		const array = this.data.dataFiltered.length === 0 ? this.data.dataUnfiltered : this.data.dataFiltered;
+		// const array = this.data.dataFiltered.length === 0 ? this.data.dataUnfiltered : this.data.dataFiltered;
+
+		const array = this.data.dataUnfiltered;
 
 		// filter by text
 		const data = this.filterDataByText(array, userText);
 
+		// remove filtered items
+		let dataFiltered = this.filterRemoveSavedItems(data);
+
 		// update browser
-		this.data.dataFilteredDisplay = this.buildDisplayData(data, this.settings.itemsToShow);
+		this.data.dataFilteredDisplay = this.buildDisplayData(dataFiltered, this.settings.itemsToShow);
   }
 
 	filterDataByText(arrayData: Array<CityInfo>, searchText: string) {
@@ -94,6 +103,9 @@ export class AppComponent implements OnInit, DoCheck {
 	}
 
 	updateSavedList(location: CityInfo, type: string) {
+		console.log('this.data: ', this.data);
+
+
 		if (type === 'add') {
 			// update item status
 			this.data.dataUnfiltered = this.updateSavedFlag(this.data.dataUnfiltered, location, true);
@@ -156,17 +168,6 @@ export class AppComponent implements OnInit, DoCheck {
 		const filterCopy = this.data.dataFiltered.slice();
 
 		this.data.dataFilteredDisplay = filterCopy.slice(0, updatedArrayLength);
-	}
-
-	testForLoadingMessage() {
-		const hasErrorMessage = this.showErrorMessage;
-
-		if (
-			this.isAppLoading &&
-			!hasErrorMessage
-		) return true;
-
-		return false;
 	}
 
 	testForNoResultsMessage() {

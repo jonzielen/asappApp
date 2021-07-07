@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-search',
@@ -8,6 +8,7 @@ import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '
 export class SearchComponent implements OnInit {
   @ViewChild('locationSearch', {static: false}) locationSearch: ElementRef;
   @Output() searchText: EventEmitter<string> = new EventEmitter();
+	@Input() isLoading: boolean;
 
   constructor() { }
 

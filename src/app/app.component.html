@@ -1,13 +1,13 @@
 <div class="container">
   <div class="row">
     <div class="col-12">
-      <h1>{{title}}</h1>
+      <h1>asappApp</h1>
 			<h1 *ngIf="showErrorMessage">There was an error, please try again later.</h1>
     </div>
   </div>
 	<div class="row">
 		<div class="col-12">
-			<app-search (searchText)="getUpdatedSearchText($event)"></app-search>
+			<app-search [isLoading]="isAppLoading" (searchText)="getUpdatedSearchText($event)"></app-search>
 		</div>
 	</div>
 	<div class="row" *ngIf="data.dataSavedDisplay.length !== 0">
@@ -25,7 +25,8 @@
 	</div>
 	<div class="row">
 		<div class="col-12">
-			<h2 *ngIf="data.dataFilteredDisplay.length === 0 && !showErrorMessage">Loading results...</h2>
+			<h2 *ngIf="showLoadingMessage">Loading data...</h2>
+			<h2 *ngIf="showNoResultsMessage">No results</h2>
 			<h2 *ngIf="data.dataFilteredDisplay.length > 0">Results: {{data.dataFiltered.length}}</h2>
 			<div class="location-scroll-container" (scroll)="scrollCheck($event.target)">
 				<div class="location-card" *ngFor="let location of data.dataFilteredDisplay; let i=index;">

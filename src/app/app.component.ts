@@ -1,33 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, DoCheck } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-
-interface CityInfo {
-  geonameid: number;
-  name: string;
-  country: string;
-  subcountry?: string;
-	index: number;
-	saved: boolean;
-};
-
-interface Settings {
-	itemsToShow: number
-}
-
-interface Data {
-	dataUnfiltered: Array<CityInfo>;
-	dataFiltered: Array<CityInfo>;
-	dataFilteredDisplay: Array<CityInfo>;
-	dataSavedDisplay: Array<CityInfo>;
-}
+import { CityInfo } from './interfaces/cityInfo';
+import { Settings } from './interfaces/settings';
+import { Data } from './interfaces/data';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit {
-  title: string = 'asappApp';
+export class AppComponent implements OnInit, DoCheck {
+	isAppLoading: boolean = true;
 	showErrorMessage: boolean = false;
 	settings: Settings = {
 		itemsToShow: 10
@@ -39,11 +22,18 @@ export class AppComponent implements OnInit {
 		dataSavedDisplay: []
 	}
 	userInputText: string;
+	showLoadingMessage: boolean;
+	showNoResultsMessage: boolean;
 
   constructor(private http: HttpClient) { }
 
 	ngOnInit(): void {
     this.fetchData();
+  }
+
+	ngDoCheck(){
+		this.showLoadingMessage = this.testForLoadingMessage();
+		this.showNoResultsMessage = this.testForNoResultsMessage();
   }
 
 	private fetchData() {
@@ -60,6 +50,7 @@ export class AppComponent implements OnInit {
 			this.data.dataUnfiltered = cities['data'];
 
 			this.displayInitData();
+			this.isAppLoading = false;
     },
     error => {
 			this.showErrorMessage = true;
@@ -145,7 +136,7 @@ export class AppComponent implements OnInit {
 	}
 
 	filterRemoveSavedItems(items: Array<CityInfo>) {
-		return items.filter(item => !!!item.saved);
+		return items.filter(item => !item.saved);
 	}
 
 	filterRemoveUnsavedItems(array: Array<CityInfo>) {
@@ -171,5 +162,33 @@ export class AppComponent implements OnInit {
 		const filterCopy = this.data.dataFiltered.slice();
 
 		this.data.dataFilteredDisplay = filterCopy.slice(0, updatedArrayLength);
+	}
+
+	testForLoadingMessage() {
+		const hasErrorMessage = this.showErrorMessage;
+
+		if (
+			this.isAppLoading &&
+			!hasErrorMessage
+		) return true;
+
+		return false;
+	}
+
+	testForNoResultsMessage() {
+		const hasFilteredData = this.data.dataFilteredDisplay.length === 0;
+		const hasErrorMessage = this.showErrorMessage;
+		const hasDefinedInputText = this.userInputText !== 'undefined';
+		const hasInputText = this.userInputText !== '' ? true : false;
+
+		if (
+			hasFilteredData &&
+			!hasErrorMessage &&
+			hasDefinedInputText &&
+			hasInputText &&
+			this.isAppLoading === false
+		) return true;
+
+		return false;
 	}
 }

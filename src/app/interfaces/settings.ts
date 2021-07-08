@@ -1,4 +1,5 @@
 export interface Settings {
-	itemsToShow: number,
-	apiUrl: string
+	getAllLocations: string,
+	getSavedLocations: string,
+	itemsToShow: number
 }

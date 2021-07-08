@@ -10,10 +10,10 @@
 			<app-search [isLoading]="isAppLoading" (searchText)="getUpdatedSearchText($event)"></app-search>
 		</div>
 	</div>
-	<div class="row" *ngIf="data.dataSavedDisplay.length !== 0">
+	<div class="row" *ngIf="data.dataSavedForDisplay.length !== 0">
 		<div class="col-12">
-			<h2>Saved Items: {{data.dataSavedDisplay.length}}</h2>
-			<div class="location-card location-saved" *ngFor="let savedLocation of data.dataSavedDisplay; let i=index; trackBy:trackByGeonameid;">
+			<h2>Saved Items: {{data.dataSavedForDisplay.length}}</h2>
+			<div class="location-card location-saved" *ngFor="let savedLocation of data.dataSavedForDisplay; let i=index; trackBy:trackByGeonameid;">
 				<!-- <button type="button" (click)="updateSavedList(savedLocation, 'remove')">Remove</button> -->
 				<input type="checkbox" (click)="updateSavedList(savedLocation, 'remove')" checked>
 				<div>{{i + 1}}.</div>
@@ -28,9 +28,9 @@
 		<div class="col-12">
 			<h2 *ngIf="isAppLoading">Loading data...</h2>
 			<h2 *ngIf="showNoResultsMessage">No results</h2>
-			<h2 *ngIf="data.dataFilteredDisplay.length > 0">Results: {{data.dataFiltered.length}}</h2>
+			<h2 *ngIf="data.dataFilteredForDisplay.length > 0">Results: {{data.dataFiltered.length}}</h2>
 			<div class="location-scroll-container" (scroll)="scrollCheck($event.target)">
-				<div class="location-card" *ngFor="let location of data.dataFilteredDisplay; let i=index; trackBy:trackByGeonameid;">
+				<div class="location-card" *ngFor="let location of data.dataFilteredForDisplay; let i=index; trackBy:trackByGeonameid;">
 					<!-- <button type="button" (click)="updateSavedList(location, 'add')">Add</button> -->
 					<input type="checkbox" (click)="updateSavedList(location, 'add')">
 					<div>{{i + 1}}.</div>

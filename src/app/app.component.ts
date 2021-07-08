@@ -13,14 +13,15 @@ export class AppComponent implements OnInit, DoCheck {
 	isAppLoading: boolean = true;
 	showErrorMessage: boolean = false;
 	settings: Settings = {
-		apiUrl: 'http://localhost:3030/cities',
+		getAllLocations: 'http://localhost:3030/cities',
+		getSavedLocations: 'http://localhost:3030/preferences/cities',
 		itemsToShow: 10
 	}
 	data: Data = {
 		dataUnfiltered: [],
 		dataFiltered: [],
-		dataFilteredDisplay: [],
-		dataSavedDisplay: []
+		dataFilteredForDisplay: [],
+		dataSavedForDisplay: []
 	}
 	userInputText: string;
 	showNoResultsMessage: boolean;
@@ -36,7 +37,7 @@ export class AppComponent implements OnInit, DoCheck {
   }
 
 	private fetchData() {
-		this.http.get(this.settings.apiUrl)
+		this.http.get(this.settings.getAllLocations)
     .subscribe(cities => {
 			// this.data.dataUnfiltered = cities['data'].slice(0, 200); // remove slice limit
 			this.data.dataUnfiltered = cities['data'];
@@ -50,7 +51,8 @@ export class AppComponent implements OnInit, DoCheck {
   }
 
 	displayInitData() {
-		this.data.dataFilteredDisplay = this.buildDisplayData(this.data.dataUnfiltered, this.settings.itemsToShow);
+		this.data.dataFilteredForDisplay = this.buildDisplayData(this.data.dataUnfiltered, this.settings.itemsToShow);
+		this.fetchSavedList();
 	}
 
 	trackByGeonameid(index: number, location: CityInfo) {
@@ -72,11 +74,8 @@ export class AppComponent implements OnInit, DoCheck {
 			// remove filtered items
 			let dataFiltered = this.filterRemoveSavedItems(this.data.dataUnfiltered);
 
-			return this.data.dataFilteredDisplay = this.buildDisplayData(dataFiltered, this.settings.itemsToShow);
+			return this.data.dataFilteredForDisplay = this.buildDisplayData(dataFiltered, this.settings.itemsToShow);
 		}
-
-		// determine array to use
-		// const array = this.data.dataFiltered.length === 0 ? this.data.dataUnfiltered : this.data.dataFiltered;
 
 		const array = this.data.dataUnfiltered;
 
@@ -87,7 +86,7 @@ export class AppComponent implements OnInit, DoCheck {
 		let dataFiltered = this.filterRemoveSavedItems(data);
 
 		// update browser
-		this.data.dataFilteredDisplay = this.buildDisplayData(dataFiltered, this.settings.itemsToShow);
+		this.data.dataFilteredForDisplay = this.buildDisplayData(dataFiltered, this.settings.itemsToShow);
   }
 
 	filterDataByText(arrayData: Array<CityInfo>, searchText: string) {
@@ -107,42 +106,53 @@ export class AppComponent implements OnInit, DoCheck {
 	}
 
 	updateSavedList(location: CityInfo, type: string) {
-		console.log('this.data: ', this.data);
-
-
 		if (type === 'add') {
-			// update item status
-			this.data.dataUnfiltered = this.updateSavedFlag(this.data.dataUnfiltered, location, true);
-
-			// updates saved items list
-			this.data.dataSavedDisplay = this.filterRemoveUnsavedItems(this.data.dataUnfiltered);
-
-			// remove filtered items
-			let data = this.filterRemoveSavedItems(this.data.dataUnfiltered);
-
-			// apply text search
-			if (this.userInputText !== '') data = this.filterDataByText(data, this.userInputText);
-
-			// update browser
-			this.data.dataFilteredDisplay = this.buildDisplayData(data, this.settings.itemsToShow);
+			// send data to server
+			this.updateSingleSaved(location, true);
 		}
 
 		if (type === 'remove') {
-			// update item status
-			this.data.dataUnfiltered = this.updateSavedFlag(this.data.dataUnfiltered, location, false);
-
-			// updates saved items list
-			this.data.dataSavedDisplay = this.filterRemoveUnsavedItems(this.data.dataUnfiltered);
-
-			// remove saved items
-			let data = this.filterRemoveSavedItems(this.data.dataUnfiltered);
-
-			// apply text search
-			if (this.userInputText !== '') data = this.filterDataByText(data, this.userInputText);
-
-			// update browser
-			this.data.dataFilteredDisplay = this.buildDisplayData(data, this.settings.itemsToShow);
+			this.updateSingleSaved(location, false);
 		}
+	}
+
+	private updateSingleSaved(location: CityInfo, flag: boolean) {
+
+		const obj = {};
+		obj[location.geonameid+''] = flag;
+
+		this.http.patch(this.settings.getSavedLocations, obj)
+		.subscribe(data => {
+				// fetch list
+				this.fetchSavedList();
+		},
+		error => {
+			console.log("Error", error);
+		});
+	}
+
+	fetchSavedList() {
+		this.http.get(this.settings.getSavedLocations)
+    .subscribe(savedCities => {
+			this.data.dataSavedForDisplay = this.findLocationsById(savedCities['data']);
+			this.data.dataFiltered = this.sortListForUnsaved(savedCities['data']);
+			this.data.dataFilteredForDisplay = this.buildDisplayData(this.data.dataFiltered, this.settings.itemsToShow);
+    },
+    error => {
+			this.showErrorMessage = true;
+    });
+	};
+
+	sortListForUnsaved(savedCities) {
+		return this.data.dataUnfiltered.filter(city => {
+			if (!savedCities.includes(city.geonameid)) return city;
+		});
+	}
+
+	findLocationsById(savedCities) {
+		return this.data.dataUnfiltered.filter(city => {
+			if (savedCities.includes(city.geonameid)) return city;
+		});
 	}
 
 	filterRemoveSavedItems(items: Array<CityInfo>) {
@@ -168,14 +178,14 @@ export class AppComponent implements OnInit, DoCheck {
 	}
 
 	updateDisplayData() {
-		const updatedArrayLength = this.data.dataFilteredDisplay.length + this.settings.itemsToShow;
+		const updatedArrayLength = this.data.dataFilteredForDisplay.length + this.settings.itemsToShow;
 		const filterCopy = this.data.dataFiltered.slice();
 
-		this.data.dataFilteredDisplay = filterCopy.slice(0, updatedArrayLength);
+		this.data.dataFilteredForDisplay = filterCopy.slice(0, updatedArrayLength);
 	}
 
 	testForNoResultsMessage() {
-		const hasFilteredData = this.data.dataFilteredDisplay.length === 0;
+		const hasFilteredData = this.data.dataFilteredForDisplay.length === 0;
 		const hasErrorMessage = this.showErrorMessage;
 		const hasDefinedInputText = this.userInputText !== 'undefined';
 		const hasInputText = this.userInputText !== '' ? true : false;

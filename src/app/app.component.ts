@@ -1,4 +1,4 @@
-import { Component, OnInit, DoCheck } from '@angular/core';
+import { Component, OnInit, DoCheck, HostListener } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CityInfo } from './interfaces/cityInfo';
 import { Settings } from './interfaces/settings';
@@ -26,7 +26,12 @@ export class AppComponent implements OnInit, DoCheck {
 	}
 	userInputText: string;
 	showNoResultsMessage: boolean;
-	isMobile: boolean = window.matchMedia("(max-width: 768px)").matches;
+	isMobile: boolean = this.isMobileCheck();
+	@HostListener('window:resize', ['$event'])
+	onResize(event) {
+		event.target.innerWidth;
+		this.isMobile = this.isMobileCheck();
+	}
 
   constructor(private http: HttpClient) { }
 
@@ -55,6 +60,10 @@ export class AppComponent implements OnInit, DoCheck {
 	displayInitData() {
 		this.data.dataFilteredForDisplay = this.buildDisplayData(this.data.dataUnfiltered, this.settings.itemsToShow);
 		this.fetchSavedList();
+	}
+
+	isMobileCheck() {
+		return window.matchMedia("(max-width: 768px)").matches;
 	}
 
 	trackByGeonameid(index: number, location: CityInfo) {

@@ -68,8 +68,8 @@ export class AppComponent implements OnInit, DoCheck {
 	getUpdatedSearchText(userText: string) {
 		// update global variable
 		this.userInputText = userText;
-		this.data.dataFilteredForDisplay = this.filterDataByText(this.data.dataUnfiltered, userText);
-		this.data.dataFilteredForDisplay = this.buildDisplayData(this.data.dataFilteredForDisplay, this.settings.itemsToShow);
+		const textFilteredData = this.filterDataByText(this.data.dataUnfiltered, userText);
+		this.data.dataFilteredForDisplay = this.buildDisplayData(textFilteredData, this.settings.itemsToShow);
   }
 
 	filterDataByText(arrayData: Array<CityInfo>, searchText: string) {

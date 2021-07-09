@@ -1,35 +1,25 @@
-<div class="container">
+<div class="container pt-3">
   <div class="row">
     <div class="col-12">
-      <h1>asappApp</h1>
 			<h1 *ngIf="showErrorMessage">There was an error, please try again later.</h1>
     </div>
   </div>
 	<div class="row">
-		<div class="col-12">
-			<app-search [isLoading]="isAppLoading" (searchText)="getUpdatedSearchText($event)"></app-search>
-		</div>
-	</div>
-	<div class="row" *ngIf="data.dataSavedForDisplay.length !== 0">
-		<div class="col-12">
-			<h2>Saved Items: {{data.dataSavedForDisplay.length}}</h2>
-			<div class="location-card location-saved" *ngFor="let savedLocation of data.dataSavedForDisplay; let i=index; trackBy:trackByGeonameid;">
-				<div>{{i + 1}}.</div>
-				<div class="location-country"><strong>Country:</strong> {{savedLocation.country}}</div>
-				<div class="location-name"><strong>City Name:</strong> {{savedLocation.name}}</div>
-				<div class="location-geonameid"><strong>Geonameid:</strong> {{savedLocation.geonameid}}</div>
-				<div class="location-subcountry" *ngIf="savedLocation.subcountry"><strong>Subcountry:</strong> {{savedLocation.subcountry}}</div>
-			</div>
+		<div class="col-12 pb-2">
+			<h1 class="text-left mb-2">City Name or Country Search:</h1>
+			<app-search *ngIf="!isAppLoading" [isLoading]="isAppLoading" (searchText)="getUpdatedSearchText($event)"></app-search>
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-12">
-			<h2 *ngIf="isAppLoading">Loading data...</h2>
+		<div class="col-12 col-md-8" *ngIf="isAppLoading">
+			<h2>Loading data...</h2>
+		</div>
+
+		<div class="col-12 col-md-8" *ngIf="!isAppLoading">
 			<h2 *ngIf="showNoResultsMessage">No results</h2>
 			<h2 *ngIf="data.dataFilteredForDisplay.length > 0">Results: {{data.dataFiltered.length}}</h2>
 			<div class="location-scroll-container" (scroll)="scrollCheck($event.target)">
 				<div class="location-card" *ngFor="let location of data.dataFilteredForDisplay; let i=index; trackBy:trackByGeonameid;">
-					<!-- <button type="button" (click)="updateSavedList(location, 'add')">Add</button> -->
 					<input type="checkbox" (click)="updateSavedList(location, $event.target.checked)" [checked]="isSaved(location.geonameid)">
 					<div>{{i + 1}}.</div>
 					<div class="location-country"><strong>Country:</strong> {{location.country}}</div>
@@ -38,6 +28,36 @@
 					<div class="location-subcountry" *ngIf="location.subcountry"><strong>Subcountry:</strong> {{location.subcountry}}</div>
 				</div>
 			</div>
+
+		</div>
+		<div class="col-12 col-md-4" *ngIf="!isAppLoading">
+			<h2>Saved Locations: {{data.dataSavedForDisplay.length}}</h2>
+			<!-- make collapse on mobile -->
+			<div class="location-card location-saved" *ngFor="let savedLocation of data.dataSavedForDisplay; let i=index; trackBy:trackByGeonameid;">
+				<h3 class="location-name" [innerHTML]="savedLocation.name"></h3>
+				<h4>
+					<span class="location-subcountry" *ngIf="savedLocation.subcountry">{{savedLocation.subcountry}}, </span>
+					<span class="location-country" [innerHTML]="savedLocation.country"></span>
+				</h4>
+				<div class="location-country"><strong>Country:</strong> {{savedLocation.country}}</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-12">
+			<!-- <h2 *ngIf="isAppLoading">Loading data...</h2>
+			<h2 *ngIf="showNoResultsMessage">No results</h2>
+			<h2 *ngIf="data.dataFilteredForDisplay.length > 0">Results: {{data.dataFiltered.length}}</h2>
+			<div class="location-scroll-container" (scroll)="scrollCheck($event.target)">
+				<div class="location-card" *ngFor="let location of data.dataFilteredForDisplay; let i=index; trackBy:trackByGeonameid;">
+					<input type="checkbox" (click)="updateSavedList(location, $event.target.checked)" [checked]="isSaved(location.geonameid)">
+					<div>{{i + 1}}.</div>
+					<div class="location-country"><strong>Country:</strong> {{location.country}}</div>
+					<div class="location-name"><strong>City Name:</strong> {{location.name}}</div>
+					<div class="location-geonameid"><strong>Geonameid:</strong> {{location.geonameid}}</div>
+					<div class="location-subcountry" *ngIf="location.subcountry"><strong>Subcountry:</strong> {{location.subcountry}}</div>
+				</div>
+			</div> -->
 		</div>
 	</div>
 </div>

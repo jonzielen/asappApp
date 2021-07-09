@@ -1,2 +1,2 @@
-<h3 class="text-left mb-2" *ngIf="!isLoading">Search by City Name or Country:</h3>
-<input type="text" name="locationSearch" *ngIf="!isLoading" [disabled]="isLoading" (keyup)="getLocations()" #locationSearch>
+<input type="text" name="locationSearch" [disabled]="isLoading" (keyup)="getLocations()" #locationSearch>
+<hr>

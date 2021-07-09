@@ -5,4 +5,5 @@ export interface Data {
 	dataFiltered: Array<CityInfo>;
 	dataFilteredForDisplay: Array<CityInfo>;
 	dataSavedForDisplay: Array<CityInfo>;
+	dataSavedLocationsIds: Array<number>;
 }

@@ -21,7 +21,8 @@ export class AppComponent implements OnInit, DoCheck {
 		dataUnfiltered: [],
 		dataFiltered: [],
 		dataFilteredForDisplay: [],
-		dataSavedForDisplay: []
+		dataSavedForDisplay: [],
+		dataSavedLocationsIds: []
 	}
 	userInputText: string;
 	showNoResultsMessage: boolean;
@@ -67,26 +68,8 @@ export class AppComponent implements OnInit, DoCheck {
 	getUpdatedSearchText(userText: string) {
 		// update global variable
 		this.userInputText = userText;
-
-		// if text is empty, show all data
-		if (userText === '') {
-
-			// remove filtered items
-			let dataFiltered = this.filterRemoveSavedItems(this.data.dataUnfiltered);
-
-			return this.data.dataFilteredForDisplay = this.buildDisplayData(dataFiltered, this.settings.itemsToShow);
-		}
-
-		const array = this.data.dataUnfiltered;
-
-		// filter by text
-		const data = this.filterDataByText(array, userText);
-
-		// remove filtered items
-		let dataFiltered = this.filterRemoveSavedItems(data);
-
-		// update browser
-		this.data.dataFilteredForDisplay = this.buildDisplayData(dataFiltered, this.settings.itemsToShow);
+		this.data.dataFilteredForDisplay = this.filterDataByText(this.data.dataUnfiltered, userText);
+		this.data.dataFilteredForDisplay = this.buildDisplayData(this.data.dataFilteredForDisplay, this.settings.itemsToShow);
   }
 
 	filterDataByText(arrayData: Array<CityInfo>, searchText: string) {
@@ -105,15 +88,8 @@ export class AppComponent implements OnInit, DoCheck {
 		});
 	}
 
-	updateSavedList(location: CityInfo, type: string) {
-		if (type === 'add') {
-			// send data to server
-			this.updateSingleSaved(location, true);
-		}
-
-		if (type === 'remove') {
-			this.updateSingleSaved(location, false);
-		}
+	updateSavedList(location: CityInfo, type: boolean) {
+		this.updateSingleSaved(location, type);
 	}
 
 	private updateSingleSaved(location: CityInfo, flag: boolean) {
@@ -134,39 +110,17 @@ export class AppComponent implements OnInit, DoCheck {
 	fetchSavedList() {
 		this.http.get(this.settings.getSavedLocations)
     .subscribe(savedCities => {
+			this.data.dataSavedLocationsIds = savedCities['data'];
 			this.data.dataSavedForDisplay = this.findLocationsById(savedCities['data']);
-			this.data.dataFiltered = this.sortListForUnsaved(savedCities['data']);
-			this.data.dataFilteredForDisplay = this.buildDisplayData(this.data.dataFiltered, this.settings.itemsToShow);
     },
     error => {
 			this.showErrorMessage = true;
     });
 	};
 
-	sortListForUnsaved(savedCities) {
-		return this.data.dataUnfiltered.filter(city => {
-			if (!savedCities.includes(city.geonameid)) return city;
-		});
-	}
-
 	findLocationsById(savedCities) {
 		return this.data.dataUnfiltered.filter(city => {
 			if (savedCities.includes(city.geonameid)) return city;
-		});
-	}
-
-	filterRemoveSavedItems(items: Array<CityInfo>) {
-		return items.filter(item => !item.saved);
-	}
-
-	filterRemoveUnsavedItems(array: Array<CityInfo>) {
-		return array.filter(item => !!item.saved);
-	}
-
-	updateSavedFlag(array: Array<CityInfo>, location: CityInfo, value: boolean) {
-		return array.map(item => {
-			if (item.geonameid === location.geonameid) item.saved = value;
-			return item;
 		});
 	}
 
@@ -175,6 +129,10 @@ export class AppComponent implements OnInit, DoCheck {
 		if ((target.scrollTop + target.offsetHeight) > target.scrollHeight - 200) {
 			this.updateDisplayData();
 		}
+	}
+
+	isSaved(id: number) {
+		return this.data.dataSavedLocationsIds.includes(id);
 	}
 
 	updateDisplayData() {

@@ -10,7 +10,7 @@
 			<app-search *ngIf="!isAppLoading" [isLoading]="isAppLoading" (searchText)="getUpdatedSearchText($event)"></app-search>
 		</div>
 	</div>
-	<div class="row">
+	<div class="row flex-column-reverse flex-md-row">
 		<div class="col-12 col-md-8" *ngIf="isAppLoading">
 			<h2>Loading data...</h2>
 		</div>
@@ -31,15 +31,18 @@
 
 		</div>
 		<div class="col-12 col-md-4" *ngIf="!isAppLoading">
-			<h2>Saved Locations: {{data.dataSavedForDisplay.length}}</h2>
-			<!-- make collapse on mobile -->
-			<div class="location-card location-saved" *ngFor="let savedLocation of data.dataSavedForDisplay; let i=index; trackBy:trackByGeonameid;">
-				<h3 class="location-name" [innerHTML]="savedLocation.name"></h3>
-				<h4>
-					<span class="location-subcountry" *ngIf="savedLocation.subcountry">{{savedLocation.subcountry}}, </span>
-					<span class="location-country" [innerHTML]="savedLocation.country"></span>
-				</h4>
-				<div class="location-country"><strong>Country:</strong> {{savedLocation.country}}</div>
+			<h2 *ngIf="!isMobile">Saved Locations: {{data.dataSavedForDisplay.length}}</h2>
+			<button class="btn btn-primary mb-2 d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="true" aria-controls="collapseExample" *ngIf="isMobile">Saved Locations: {{data.dataSavedForDisplay.length}}</button>
+
+			<div class="collapse mb-2 mb-md-0" id="collapseExample" [ngClass]="{'show': !isMobile}">
+				<div class="location-card location-saved" *ngFor="let savedLocation of data.dataSavedForDisplay; let i=index; trackBy:trackByGeonameid;">
+					<h3 class="location-name" [innerHTML]="savedLocation.name"></h3>
+					<h4>
+						<span class="location-subcountry" *ngIf="savedLocation.subcountry">{{savedLocation.subcountry}}, </span>
+						<span class="location-country" [innerHTML]="savedLocation.country"></span>
+					</h4>
+					<div class="location-country"><strong>Country:</strong> {{savedLocation.country}}</div>
+				</div>
 			</div>
 		</div>
 	</div>

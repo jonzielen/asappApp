@@ -26,6 +26,7 @@ export class AppComponent implements OnInit, DoCheck {
 	}
 	userInputText: string;
 	showNoResultsMessage: boolean;
+	isMobile: boolean = window.matchMedia("(max-width: 768px)").matches;
 
   constructor(private http: HttpClient) { }
 

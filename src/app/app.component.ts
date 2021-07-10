@@ -1,4 +1,4 @@
-import { Component, OnInit, DoCheck, HostListener } from '@angular/core';
+import { Component, OnInit, DoCheck, HostListener, ViewEncapsulation } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CityInfo } from './interfaces/cityInfo';
 import { Settings } from './interfaces/settings';
@@ -7,7 +7,8 @@ import { Data } from './interfaces/data';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
+	encapsulation: ViewEncapsulation.None
 })
 export class AppComponent implements OnInit, DoCheck {
 	isAppLoading: boolean = true;

@@ -1,1 +1,4 @@
-<input class="search-box" type="text" placeholder="Search for a location..." name="locationSearch" [disabled]="isLoading" (keyup)="getLocations()" #locationSearch>
+<label for="locationSearch" class="d-block">
+	<h2>Search:</h2>
+</label>
+<input class="search-box" type="text" placeholder="Enter a city name or country..." name="locationSearch" id="locationSearch" [disabled]="isLoading" (keyup)="getLocations()" #locationSearch>

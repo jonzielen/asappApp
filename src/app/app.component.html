@@ -29,13 +29,17 @@
 					<h2 *ngIf="showNoResultsMessage">No results</h2>
 					<h2 *ngIf="data.dataFilteredForDisplay.length > 0">Locations:</h2>
 					<div class="scroll-container" (scroll)="scrollCheck($event.target)">
-						<div class="location-card" *ngFor="let location of data.dataFilteredForDisplay; let i=index; trackBy:trackByGeonameid;">
-							<input type="checkbox" (click)="updateSavedList(location, $event.target.checked)" [checked]="isSaved(location.geonameid)">
-							<div>{{i + 1}}.</div>
-							<div class="location-country"><strong>Country:</strong> {{location.country}}</div>
-							<div class="location-name"><strong>City Name:</strong> {{location.name}}</div>
-							<div class="location-geonameid"><strong>Geonameid:</strong> {{location.geonameid}}</div>
-							<div class="location-subcountry" *ngIf="location.subcountry"><strong>Subcountry:</strong> {{location.subcountry}}</div>
+						<div class="location-card d-flex" *ngFor="let location of data.dataFilteredForDisplay; let i=index; trackBy:trackByGeonameid;">
+							<div class="location-card-input-wrapper">
+								<input id="{{ 'checkbox-' + i}}" type="checkbox" (click)="updateSavedList(location, $event.target.checked)" [checked]="isSaved(location.geonameid)">
+							</div>
+							<label for="{{ 'checkbox-' + i}}" class="location-card-details">
+								<h3 class="location-name" [innerHTML]="location.name"></h3>
+								<h4>
+									<span class="location-country" [innerHTML]="location.country"></span>
+									<span class="location-subcountry" *ngIf="location.subcountry"> - {{location.subcountry}}</span>
+								</h4>
+							</label>
 						</div>
 					</div>
 				</div>
@@ -43,15 +47,14 @@
 					<h2 *ngIf="!isMobile">Saved: {{data.dataSavedForDisplay.length}}</h2>
 					<button class="btn cta-button cta-button-black saved-btn d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSaved" aria-expanded="true" aria-controls="collapseSaved" *ngIf="isMobile">Saved Locations: {{data.dataSavedForDisplay.length}}</button>
 
-					<div class="collapse mb-2 mb-md-0" id="collapseSaved" [ngClass]="{'show': !isMobile}">
+					<div class="collapse" id="collapseSaved" [ngClass]="{'show': !isMobile}">
 						<div class="scroll-container">
 							<div class="location-card location-saved" *ngFor="let savedLocation of data.dataSavedForDisplay; let i=index; trackBy:trackByGeonameid;">
 								<h3 class="location-name" [innerHTML]="savedLocation.name"></h3>
 								<h4>
-									<span class="location-subcountry" *ngIf="savedLocation.subcountry">{{savedLocation.subcountry}}, </span>
 									<span class="location-country" [innerHTML]="savedLocation.country"></span>
+									<span class="location-subcountry" *ngIf="savedLocation.subcountry"> - {{savedLocation.subcountry}}</span>
 								</h4>
-								<div class="location-country"><strong>Country:</strong> {{savedLocation.country}}</div>
 							</div>
 						</div>
 					</div>

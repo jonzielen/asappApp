@@ -35,6 +35,21 @@ $primaryGray: #e0dddf;
 	font-weight: 700;
 }
 
+@font-face {
+  font-family: 'DM Mono';
+  src: url('./assets/fonts/dm-mono-v5-latin-regular.woff2') format('woff2');
+	font-weight: 500;
+}
+
+@font-face {
+  font-family: 'DM Sans';
+  src: url('./assets/fonts/dm-sans-v6-latin-700.woff2') format('woff2');
+	font-weight: 700;
+}
+
+
+// dm-mono-v5-latin-regular.woff2
+
 html, body {
 	background-color: #000;
 	color: #fff;
@@ -147,6 +162,8 @@ p {
 	&:focus {
 		box-shadow: none;
 	}
+
+
 }
 
 .cta-button-white {

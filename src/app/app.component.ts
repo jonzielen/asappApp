@@ -100,6 +100,11 @@ export class AppComponent implements OnInit, DoCheck {
 	}
 
 	updateSavedList(location: CityInfo, type: boolean) {
+		console.log('location: ', location);
+		console.log('type: ', type);
+
+
+
 		this.updateSingleSaved(location, type);
 	}
 

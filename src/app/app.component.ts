@@ -30,6 +30,7 @@ export class AppComponent implements OnInit, DoCheck {
 	showNoResultsMessage: boolean;
 	isMobile: boolean = this.isMobileCheck();
 	isServerCall: boolean = false;
+	errorTries: number = 0;
 	@HostListener('window:resize', ['$event'])
 	onResize(event) {
 		event.target.innerWidth;
@@ -49,14 +50,19 @@ export class AppComponent implements OnInit, DoCheck {
 	private fetchData() {
 		this.http.get(this.settings.getAllLocations)
     .subscribe(cities => {
-			this.data.dataUnfiltered = cities['data'].slice(0, 200); // remove slice limit
-			// this.data.dataUnfiltered = cities['data'];
+			/// this.data.dataUnfiltered = cities['data'].slice(0, 200); // remove slice limit
+			this.data.dataUnfiltered = cities['data'];
 
 			this.displayInitData();
 			this.isAppLoading = false;
     },
     error => {
 			this.showErrorMessage = true;
+
+			// check server again
+			if (this.errorTries > 3) return this.errorTries = 0;
+			++this.errorTries;
+			this.fetchData();
     });
   }
 
@@ -118,17 +124,31 @@ export class AppComponent implements OnInit, DoCheck {
 			console.log("Error", error);
 			this.isServerCall = false;
 			this.addScroll();
+
+			// check server again
+			if (this.errorTries > 3) return this.errorTries = 0;
+			++this.errorTries;
+			this.fetchData();
 		});
 	}
 
 	fetchSavedList() {
+		this.isServerCall = true;
+
 		this.http.get(this.settings.getSavedLocations)
     .subscribe(savedCities => {
 			this.data.dataSavedLocationsIds = savedCities['data'];
 			this.data.dataSavedForDisplay = this.findLocationsById(savedCities['data']);
+			this.isServerCall = false;
     },
     error => {
 			this.showErrorMessage = true;
+			this.isServerCall = false;
+
+			// check server again
+			if (this.errorTries > 3) return this.errorTries = 0;
+			++this.errorTries;
+			this.fetchData();
     });
 	};
 
@@ -144,10 +164,6 @@ export class AppComponent implements OnInit, DoCheck {
 			this.updateDisplayData();
 		}
 	}
-
-	// isSaved(id: number) {
-	// 	return this.data.dataSavedLocationsIds.includes(id);
-	// }
 
 	updateDisplayData() {
 		const updatedArrayLength = this.data.dataFilteredForDisplay.length + this.settings.itemsToShow;

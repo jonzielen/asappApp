@@ -1,6 +1,7 @@
 @import "./node_modules/bootstrap/scss/bootstrap-utilities.scss";
 
 
+.saved-column,
 .results-column {
 	&.loading {
 		overflow: hidden;
@@ -8,7 +9,6 @@
 
 		&::after {
 			content: '';
-			// height: 1000000vh;
 			position: absolute;
 			top: 0;
 			left: 0;

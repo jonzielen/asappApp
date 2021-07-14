@@ -33,12 +33,14 @@
 						<div class="scroll-container" (scroll)="scrollCheck($event.target)">
 							<app-locations-display [locations]="data" (saveLocation)="updateSavedList($event.location, $event.type)"></app-locations-display>
 						</div>
+						<div class="loading-animation"></div>
 					</div>
 				</div>
 				<div class="col-12 col-md-4" *ngIf="!isAppLoading">
 					<h2 class="d-none d-md-block">Saved: {{data.dataSavedForDisplay.length}}</h2>
 					<div class="saved-column" [ngClass]="{'loading': isServerCall}">
 						<app-saved-display [savedLocations]="data.dataSavedForDisplay" (removeLocation)="updateSavedList($event, false)"></app-saved-display>
+						<div class="loading-animation"></div>
 					</div>
 				</div>
 			</div>

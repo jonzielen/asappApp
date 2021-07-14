@@ -50,36 +50,11 @@
 								</label>
 							</div>
 
-
-
-
 						</div>
 					</div>
 				</div>
 				<div class="col-12 col-md-4 saved-column" *ngIf="!isAppLoading">
-					<!-- passed in: data.dataSavedForDisplay, isMobile, trackByGeonameid -->
-					<!-- passed out: updateSavedList -->
-
-
-					<h2 *ngIf="!isMobile">Saved: {{data.dataSavedForDisplay.length}}</h2>
-					<button class="btn cta-button cta-button-black saved-btn d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSaved" aria-expanded="true" aria-controls="collapseSaved" *ngIf="isMobile">Saved Locations: {{data.dataSavedForDisplay.length}}</button>
-
-					<div class="collapse" id="collapseSaved" [ngClass]="{'show': !isMobile}">
-						<div class="scroll-container">
-							<div class="location-card location-saved" *ngFor="let savedLocation of data.dataSavedForDisplay; let i=index; trackBy:trackByGeonameid;">
-								<div class="location-card-details">
-									<h3 class="location-name" [innerHTML]="savedLocation.name"></h3>
-									<h4>
-										<span class="location-country" [innerHTML]="savedLocation.country"></span>
-										<span class="location-subcountry" *ngIf="savedLocation.subcountry"> - {{savedLocation.subcountry}}</span>
-									</h4>
-								</div>
-								<div class="location-card-btn-wrapper">
-									<span class="location-card-x" (click)="updateSavedList(savedLocation, false)">&#10005;</span>
-								</div>
-							</div>
-						</div>
-					</div>
+					<app-saved-display [savedLocations]="data.dataSavedForDisplay" (removeLocation)="updateSavedList($event, false)"></app-saved-display>
 				</div>
 			</div>
 		</div>

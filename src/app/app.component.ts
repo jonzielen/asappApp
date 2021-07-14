@@ -69,10 +69,6 @@ export class AppComponent implements OnInit, DoCheck {
 		return window.matchMedia("(max-width: 768px)").matches;
 	}
 
-	trackByGeonameid(index: number, location: CityInfo) {
-    return location.geonameid;
-	}
-
 	buildDisplayData(dataArray: Array<CityInfo>, limit: number) {
 		this.data.dataFiltered = dataArray;
 		return dataArray.slice(0, limit);
@@ -102,6 +98,10 @@ export class AppComponent implements OnInit, DoCheck {
 	}
 
 	updateSavedList(location: CityInfo, type: boolean) {
+
+		console.log('location: ', location);
+
+
 		this.updateSingleSaved(location, type);
 	}
 

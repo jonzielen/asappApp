@@ -1,0 +1,13 @@
+
+<div class="location-card" *ngFor="let location of locations.dataFilteredForDisplay; let i=index; trackBy:trackByGeonameid;">
+	<div class="location-card-input-wrapper">
+		<input id="{{ 'checkbox-' + i}}" type="checkbox" (click)="emitSaved(location, $event.target.checked)" [checked]="isSaved(location.geonameid)">
+	</div>
+	<label for="{{ 'checkbox-' + i}}" class="location-card-details">
+		<h3 class="location-name" [innerHTML]="location.name"></h3>
+		<h4 class="location-country-wrapper">
+			<span class="location-country" [innerHTML]="location.country"></span>
+			<span class="location-subcountry" *ngIf="location.subcountry"> - {{location.subcountry}}</span>
+		</h4>
+	</label>
+</div>

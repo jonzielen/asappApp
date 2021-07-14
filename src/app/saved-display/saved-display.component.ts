@@ -27,5 +27,4 @@ export class SavedDisplayComponent implements OnInit {
 	emitLocation(location) {
 		this.removeLocation.emit(location);
 	}
-
 }

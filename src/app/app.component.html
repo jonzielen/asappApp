@@ -30,26 +30,8 @@
 					<h2 *ngIf="data.dataFilteredForDisplay.length > 0">Locations:</h2>
 
 					<div class="results-column" [ngClass]="{'loading': isServerCall}">
-						<!-- pass in:  -->
-						<!-- pass out:  -->
-
 						<div class="scroll-container" (scroll)="scrollCheck($event.target)">
-
-
-
-							<div class="location-card" *ngFor="let location of data.dataFilteredForDisplay; let i=index; trackBy:trackByGeonameid;">
-								<div class="location-card-input-wrapper">
-									<input id="{{ 'checkbox-' + i}}" type="checkbox" (click)="updateSavedList(location, $event.target.checked)" [checked]="isSaved(location.geonameid)">
-								</div>
-								<label for="{{ 'checkbox-' + i}}" class="location-card-details">
-									<h3 class="location-name" [innerHTML]="location.name"></h3>
-									<h4 class="location-country-wrapper">
-										<span class="location-country" [innerHTML]="location.country"></span>
-										<span class="location-subcountry" *ngIf="location.subcountry"> - {{location.subcountry}}</span>
-									</h4>
-								</label>
-							</div>
-
+							<app-locations-display [locations]="data" (saveLocation)="updateSavedList($event.location, $event.type)"></app-locations-display>
 						</div>
 					</div>
 				</div>

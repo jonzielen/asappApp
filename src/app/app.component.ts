@@ -49,8 +49,8 @@ export class AppComponent implements OnInit, DoCheck {
 	private fetchData() {
 		this.http.get(this.settings.getAllLocations)
     .subscribe(cities => {
-			// this.data.dataUnfiltered = cities['data'].slice(0, 200); // remove slice limit
-			this.data.dataUnfiltered = cities['data'];
+			this.data.dataUnfiltered = cities['data'].slice(0, 200); // remove slice limit
+			// this.data.dataUnfiltered = cities['data'];
 
 			this.displayInitData();
 			this.isAppLoading = false;
@@ -98,10 +98,6 @@ export class AppComponent implements OnInit, DoCheck {
 	}
 
 	updateSavedList(location: CityInfo, type: boolean) {
-
-		console.log('location: ', location);
-
-
 		this.updateSingleSaved(location, type);
 	}
 
@@ -149,9 +145,9 @@ export class AppComponent implements OnInit, DoCheck {
 		}
 	}
 
-	isSaved(id: number) {
-		return this.data.dataSavedLocationsIds.includes(id);
-	}
+	// isSaved(id: number) {
+	// 	return this.data.dataSavedLocationsIds.includes(id);
+	// }
 
 	updateDisplayData() {
 		const updatedArrayLength = this.data.dataFilteredForDisplay.length + this.settings.itemsToShow;

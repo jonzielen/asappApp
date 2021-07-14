@@ -1,5 +1,26 @@
 @import "./node_modules/bootstrap/scss/bootstrap-utilities.scss";
 
+
+.results-column {
+	&.loading {
+		overflow: hidden;
+		position: relative;
+
+		&::after {
+			content: '';
+			// height: 1000000vh;
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background-color: #000;
+			opacity: 0.2;
+			z-index: 5;
+		}
+	}
+}
+
 .scroll-container {
 	overflow-y: scroll;
 	height: 70vh;
@@ -37,7 +58,7 @@
 
 	.location-card-btn-wrapper {
 		@include media-breakpoint-up(md) {
-			padding-left: 14px;
+			padding: 0 8px 0 14px;
 		}
 	}
 

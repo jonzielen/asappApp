@@ -1,5 +1,6 @@
-import { Component, OnInit, DoCheck, HostListener, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, DoCheck, HostListener, ViewEncapsulation, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { DOCUMENT } from '@angular/common';
 import { CityInfo } from './interfaces/cityInfo';
 import { Settings } from './interfaces/settings';
 import { Data } from './interfaces/data';
@@ -28,13 +29,14 @@ export class AppComponent implements OnInit, DoCheck {
 	userInputText: string;
 	showNoResultsMessage: boolean;
 	isMobile: boolean = this.isMobileCheck();
+	isServerCall: boolean = false;
 	@HostListener('window:resize', ['$event'])
 	onResize(event) {
 		event.target.innerWidth;
 		this.isMobile = this.isMobileCheck();
 	}
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, @Inject(DOCUMENT) private document: Document) { }
 
 	ngOnInit(): void {
     this.fetchData();
@@ -100,16 +102,12 @@ export class AppComponent implements OnInit, DoCheck {
 	}
 
 	updateSavedList(location: CityInfo, type: boolean) {
-		console.log('location: ', location);
-		console.log('type: ', type);
-
-
-
 		this.updateSingleSaved(location, type);
 	}
 
 	private updateSingleSaved(location: CityInfo, flag: boolean) {
-
+		this.isServerCall = true;
+		this.removeScroll();
 		const obj = {};
 		obj[location.geonameid+''] = flag;
 
@@ -117,9 +115,13 @@ export class AppComponent implements OnInit, DoCheck {
 		.subscribe(data => {
 				// fetch list
 				this.fetchSavedList();
+				this.isServerCall = false;
+				this.addScroll();
 		},
 		error => {
 			console.log("Error", error);
+			this.isServerCall = false;
+			this.addScroll();
 		});
 	}
 
@@ -156,6 +158,14 @@ export class AppComponent implements OnInit, DoCheck {
 		const filterCopy = this.data.dataFiltered.slice();
 
 		this.data.dataFilteredForDisplay = filterCopy.slice(0, updatedArrayLength);
+	}
+
+	addScroll() {
+		this.document.body.classList.remove('overflow-hidden');
+	}
+
+	removeScroll() {
+		this.document.body.classList.add('overflow-hidden');
 	}
 
 	testForNoResultsMessage() {

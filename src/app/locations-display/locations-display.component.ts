@@ -24,7 +24,7 @@ export class LocationsDisplayComponent implements OnInit {
 		return this.locations.dataSavedLocationsIds.includes(id);
 	}
 
-	emitSaved(loc, isChecked) {
+	emitSaved(loc: CityInfo, isChecked: boolean) {
 		const saveData = {
 			location: loc,
 			type: isChecked

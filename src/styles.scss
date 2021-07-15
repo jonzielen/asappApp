@@ -1,16 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @import "../node_modules/bootstrap/scss/bootstrap.scss";
 
-$primaryBlue: #00aee5;
-$primaryGray: #e0dddf;
-
-
-@font-face {
-  font-family: 'Messina';
-  src: url('./assets/fonts/MessinaSansMonoWeb-SemiBold.woff2') format('woff2');
-	font-weight: 600;
-}
-
 @font-face {
   font-family: 'Aeonik';
   src: url('./assets/fonts/Aeonik-Light.woff2') format('woff2');
@@ -47,18 +37,11 @@ $primaryGray: #e0dddf;
 	font-weight: 700;
 }
 
-
-// dm-mono-v5-latin-regular.woff2
-
 html, body {
 	background-color: #000;
 	color: #fff;
 	font-family: 'Aeonik', sans-serif;
 	font-feature-settings: 'ss02';
-}
-
-body {
-
 }
 
 h1 {
@@ -69,18 +52,6 @@ h1 {
 	@include media-breakpoint-up(md) {
 		margin-bottom: 70px;
 	}
-}
-
-h2 {
-
-}
-
-h3 {
-
-}
-
-h4 {
-
 }
 
 p {
@@ -113,6 +84,8 @@ p {
 .main-display {
 	padding: 100px 25px 50px;
 	margin-bottom: 50px;
+	position: relative;
+	z-index: 1;
 
 	@include media-breakpoint-up(md) {
 		padding: 150px 50px 100px;
@@ -125,19 +98,12 @@ p {
 	color: #000;
 }
 
-
-// @include media-breakpoint-down(sm) {
-
-// }
-
 .gray-bg {
 	background-color: #f5f6f3;
 }
 
 .cta-button {
 	width: 100%;
-	min-width: 306px;
-	max-width: 400px;
 	font-weight: 500;
 	font-size: 21px;
 	line-height: 24px;
@@ -162,8 +128,6 @@ p {
 	&:focus {
 		box-shadow: none;
 	}
-
-
 }
 
 .cta-button-white {
@@ -175,10 +139,3 @@ p {
 .saved-btn {
 	margin-bottom: 0;
 }
-
-
-
-
-// background: #00aee5;
-// border: 1px solid #00aee5;
-

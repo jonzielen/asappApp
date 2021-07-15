@@ -1,4 +1,3 @@
-
 <div class="location-card" *ngFor="let location of locations.dataFilteredForDisplay; let i=index; trackBy:trackByGeonameid;">
 	<div class="location-card-input-wrapper">
 		<input id="{{ 'checkbox-' + i}}" type="checkbox" (click)="emitSaved(location, $event.target.checked)" [checked]="isSaved(location.geonameid)">

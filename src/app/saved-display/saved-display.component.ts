@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { CityInfo } from '../interfaces/cityInfo';
 
 @Component({
@@ -10,6 +10,10 @@ export class SavedDisplayComponent implements OnInit {
 	@Output() removeLocation: EventEmitter<CityInfo> = new EventEmitter();
 	@Input() savedLocations: Array<CityInfo>;
 	isMobile: boolean = this.isMobileCheck();
+	@HostListener('window:resize', ['$event'])
+	onResize() {
+		this.isMobile = this.isMobileCheck();
+	}
 
   constructor() { }
 

@@ -11,8 +11,8 @@
 			<!-- messages -->
 			<div class="row">
 				<div class="col-12">
-					<h1 *ngIf="showErrorMessage">There was an error, please try again later.</h1>
-					<h2 *ngIf="isAppLoading">Loading data...</h2>
+					<h2 *ngIf="showErrorMessage">There was an error loading the app, please try again later.</h2>
+					<h2 *ngIf="isAppLoading && !showErrorMessage">Loading data...</h2>
 				</div>
 			</div>
 

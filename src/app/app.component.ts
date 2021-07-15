@@ -32,8 +32,7 @@ export class AppComponent implements OnInit, DoCheck {
 	isServerCall: boolean = false;
 	errorTries: number = 0;
 	@HostListener('window:resize', ['$event'])
-	onResize(event) {
-		event.target.innerWidth;
+	onResize() {
 		this.isMobile = this.isMobileCheck();
 	}
 
@@ -50,17 +49,19 @@ export class AppComponent implements OnInit, DoCheck {
 	private fetchData() {
 		this.http.get(this.settings.getAllLocations)
     .subscribe(cities => {
-			/// this.data.dataUnfiltered = cities['data'].slice(0, 200); // remove slice limit
 			this.data.dataUnfiltered = cities['data'];
 
 			this.displayInitData();
 			this.isAppLoading = false;
     },
     error => {
-			this.showErrorMessage = true;
-
 			// check server again
-			if (this.errorTries > 3) return this.errorTries = 0;
+			if (this.errorTries > 3) {
+				this.showErrorMessage = true;
+				return this.errorTries = 0;
+			}
+
+			// this.isAppLoading = false;
 			++this.errorTries;
 			this.fetchData();
     });
@@ -121,12 +122,14 @@ export class AppComponent implements OnInit, DoCheck {
 				this.addScroll();
 		},
 		error => {
-			console.log("Error", error);
-			this.isServerCall = false;
-			this.addScroll();
-
 			// check server again
-			if (this.errorTries > 3) return this.errorTries = 0;
+			if (this.errorTries >= 3) {
+				this.isAppLoading = false;
+				this.isServerCall = false;
+				return this.errorTries = 0;
+			}
+
+			this.addScroll();
 			++this.errorTries;
 			this.fetchData();
 		});
@@ -142,17 +145,20 @@ export class AppComponent implements OnInit, DoCheck {
 			this.isServerCall = false;
     },
     error => {
-			this.showErrorMessage = true;
-			this.isServerCall = false;
-
 			// check server again
-			if (this.errorTries > 3) return this.errorTries = 0;
+			if (this.errorTries > 3) {
+				this.isServerCall = false;
+				this.showErrorMessage = true;
+				return this.errorTries = 0;
+			}
+
+			this.isServerCall = false;
 			++this.errorTries;
 			this.fetchData();
     });
 	};
 
-	findLocationsById(savedCities) {
+	findLocationsById(savedCities: Array<number>) {
 		return this.data.dataUnfiltered.filter(city => {
 			if (savedCities.includes(city.geonameid)) return city;
 		});
@@ -168,7 +174,6 @@ export class AppComponent implements OnInit, DoCheck {
 	updateDisplayData() {
 		const updatedArrayLength = this.data.dataFilteredForDisplay.length + this.settings.itemsToShow;
 		const filterCopy = this.data.dataFiltered.slice();
-
 		this.data.dataFilteredForDisplay = filterCopy.slice(0, updatedArrayLength);
 	}
 

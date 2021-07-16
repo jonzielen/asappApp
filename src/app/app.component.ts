@@ -131,7 +131,7 @@ export class AppComponent implements OnInit, DoCheck {
 
 			this.addScroll();
 			++this.errorTries;
-			this.fetchData();
+			this.updateSingleSaved(location, flag);
 		});
 	}
 
@@ -154,7 +154,7 @@ export class AppComponent implements OnInit, DoCheck {
 
 			this.isServerCall = false;
 			++this.errorTries;
-			this.fetchData();
+			this.fetchSavedList();
     });
 	};
 
